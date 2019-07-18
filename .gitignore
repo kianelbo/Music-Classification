@@ -1,8 +1,8 @@
 # JetBrains WebStorm project folder
 .idea/
 
-# Dataset
-dataset/
+# saved models, csv and spectrogram dataset
+save/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
