@@ -1,8 +1,8 @@
+import pickle
 from tensorflow.python.keras.models import Sequential, load_model
 from tensorflow.python.keras.layers import Dense, Activation, Dropout, Flatten
 from tensorflow.python.keras.layers import Conv2D, MaxPooling2D
 from tensorflow.python.keras.utils import to_categorical
-import pickle
 
 
 class SpectrogramBasedModel:
@@ -38,7 +38,7 @@ class SpectrogramBasedModel:
         self.model.add(Flatten())
         self.model.add(Dense(1024))
         self.model.add(Activation('elu'))
-        self.model.add(Dropout(.5))
+        self.model.add(Dropout(.2))
 
         self.model.add(Dense(5))
         self.model.add(Activation('softmax'))
