@@ -2,19 +2,18 @@ import pickle
 import pandas as pd
 import numpy as np
 from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import LabelEncoder, StandardScaler
+from sklearn.preprocessing import StandardScaler
 import tensorflow.python.keras as keras
 
 
 class FeaturesBasedModel:
     def __init__(self, model_path=None):
+        self.encoder = pickle.load(open('save/encoder.pickle', 'rb'))
         if model_path is not None:
             self.model = keras.models.load_model(model_path)
-            self.encoder = pickle.load(open('save/f_encoder.pickle', 'rb'))
             self.scaler = pickle.load(open('save/f_scaler.pickle', 'rb'))
         else:
             self.model = None
-            self.encoder = LabelEncoder()
             self.scaler = StandardScaler()
 
     def train(self, csv_file):
@@ -22,12 +21,9 @@ class FeaturesBasedModel:
 
         data.drop(['title'], axis=1, inplace=True)
 
-        # obtaining target column and encoder
+        # obtaining target column
         genre_column = data['genre']
-        y = self.encoder.fit_transform(genre_column)
-        pickle_out = open('save/f_encoder.pickle', 'wb')
-        pickle.dump(self.encoder, pickle_out)
-        pickle_out.close()
+        y = self.encoder.transform(genre_column)
         n_classes = len(self.encoder.classes_)
 
         # obtaining feature columns and scaler

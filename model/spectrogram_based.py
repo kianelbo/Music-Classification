@@ -1,6 +1,5 @@
 import pickle
 import numpy as np
-from sklearn.preprocessing import LabelEncoder
 from tensorflow.python.keras.models import Sequential, load_model
 from tensorflow.python.keras.layers import Dense, Activation, Dropout, Flatten
 from tensorflow.python.keras.layers import Conv2D, MaxPooling2D
@@ -8,22 +7,16 @@ from tensorflow.python.keras.layers import Conv2D, MaxPooling2D
 
 class SpectrogramBasedModel:
     def __init__(self, model_path=None):
+        self.encoder = pickle.load(open('save/encoder.pickle', 'rb'))
         if model_path is not None:
             self.model = load_model(model_path)
-            self.encoder = pickle.load(open('save/s_encoder.pickle', 'rb'))
         else:
             self.model = None
-            self.encoder = LabelEncoder()
 
     def train(self, X_pickle, y_pickle):
         X = pickle.load(open(X_pickle, 'rb'))
         y = pickle.load(open(y_pickle, 'rb'))
 
-        # obtaining encoded target column and encoder
-        y = self.encoder.fit_transform(y)
-        pickle_out = open('save/s_encoder.pickle', 'wb')
-        pickle.dump(self.encoder, pickle_out)
-        pickle_out.close()
         n_classes = len(self.encoder.classes_)
 
         self.model = Sequential()
@@ -49,7 +42,7 @@ class SpectrogramBasedModel:
 
         self.model.compile(loss='sparse_categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 
-        self.model.fit(X, y, batch_size=32, epochs=1, validation_split=0.2)
+        self.model.fit(X, y, batch_size=32, epochs=5, validation_split=0.2)
         print('training done')
 
         self.model.save('save/sb.model')
