@@ -27,7 +27,11 @@ class SpectrogramBasedModel:
         n_classes = len(self.encoder.classes_)
 
         self.model = Sequential()
-        self.model.add(Conv2D(64, (2, 2), input_shape=X.shape[1:]))
+        self.model.add(Conv2D(32, (2, 2), input_shape=X.shape[1:]))
+        self.model.add(Activation('elu'))
+        self.model.add(MaxPooling2D(pool_size=(2, 2)))
+
+        self.model.add(Conv2D(64, (2, 2)))
         self.model.add(Activation('elu'))
         self.model.add(MaxPooling2D(pool_size=(2, 2)))
 
@@ -35,17 +39,9 @@ class SpectrogramBasedModel:
         self.model.add(Activation('elu'))
         self.model.add(MaxPooling2D(pool_size=(2, 2)))
 
-        self.model.add(Conv2D(256, (2, 2)))
-        self.model.add(Activation('elu'))
-        self.model.add(MaxPooling2D(pool_size=(2, 2)))
-
-        self.model.add(Conv2D(512, (2, 2)))
-        self.model.add(Activation('elu'))
-        self.model.add(MaxPooling2D(pool_size=(2, 2)))
-
         self.model.add(Dropout(.2))
         self.model.add(Flatten())
-        self.model.add(Dense(1024))
+        self.model.add(Dense(256))
         self.model.add(Activation('elu'))
 
         self.model.add(Dense(n_classes))

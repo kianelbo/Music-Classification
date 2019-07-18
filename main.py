@@ -3,7 +3,7 @@ from model.features_based import FeaturesBasedModel
 from model.spectrogram_based import SpectrogramBasedModel
 
 # make_training_data('D:/dataset3/')
-features_set, spectrogram_slices = extract('D:/Hells Bells.mp3')
+features_set, spectrogram_slices = extract('D:/Orion.mp3')
 
 # model = FeaturesBasedModel('save/fb.model')
 # model.train('save/data.csv')
