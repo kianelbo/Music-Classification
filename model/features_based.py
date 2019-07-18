@@ -10,8 +10,8 @@ class FeaturesBasedModel:
     def __init__(self, model_path=None):
         if model_path is not None:
             self.model = keras.models.load_model(model_path)
-            self.encoder = pickle.load(open('save/enc_classes.pickle', 'rb'))
-            self.scaler = pickle.load(open('save/feat_scaler.pickle', 'rb'))
+            self.encoder = pickle.load(open('save/f_encoder.pickle', 'rb'))
+            self.scaler = pickle.load(open('save/f_scaler.pickle', 'rb'))
         else:
             self.model = None
             self.encoder = LabelEncoder()
@@ -25,7 +25,7 @@ class FeaturesBasedModel:
         # obtaining target column and encoder
         genre_column = data['genre']
         y = self.encoder.fit_transform(genre_column)
-        pickle_out = open('save/enc_classes.pickle', 'wb')
+        pickle_out = open('save/f_encoder.pickle', 'wb')
         pickle.dump(self.encoder, pickle_out)
         pickle_out.close()
         n_classes = len(self.encoder.classes_)
@@ -33,7 +33,7 @@ class FeaturesBasedModel:
         # obtaining feature columns and scaler
         X = np.array(data.drop(['genre'], axis=1), dtype=float)
         X = self.scaler.fit_transform(X)
-        pickle_out = open('save/feat_scaler.pickle', 'wb')
+        pickle_out = open('save/f_scaler.pickle', 'wb')
         pickle.dump(self.scaler, pickle_out)
         pickle_out.close()
 
@@ -62,7 +62,4 @@ class FeaturesBasedModel:
         scaled_samples = self.scaler.transform(np.array(samples, dtype=float))
         prediction = self.model.predict(scaled_samples)
         prediction = np.argmax(prediction, axis=1)
-        # prediction = prediction.sum(axis=0)
-        print(prediction)
-        # prediction = np.argmax(prediction)
         print(self.encoder.inverse_transform(prediction))

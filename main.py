@@ -3,9 +3,12 @@ from model.features_based import FeaturesBasedModel
 from model.spectrogram_based import SpectrogramBasedModel
 
 # make_training_data('D:/dataset3/')
+features_set, spectrogram_slices = extract('D:/Hells Bells.mp3')
 
-model = FeaturesBasedModel('save/fb.model')
+# model = FeaturesBasedModel('save/fb.model')
 # model.train('save/data.csv')
-features_set, _ = extract('D:/Hells Bells.mp3')
-model.predict(features_set)
-# SpectrogramBasedModel().train('save/X.pickle', 'save/y.pickle')
+# model.predict(features_set)
+
+model = SpectrogramBasedModel('save/sb.model')
+# model.train('save/X.pickle', 'save/y.pickle')
+model.predict(spectrogram_slices)

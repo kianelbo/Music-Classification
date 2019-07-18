@@ -1,22 +1,30 @@
 import pickle
+import numpy as np
+from sklearn.preprocessing import LabelEncoder
 from tensorflow.python.keras.models import Sequential, load_model
 from tensorflow.python.keras.layers import Dense, Activation, Dropout, Flatten
 from tensorflow.python.keras.layers import Conv2D, MaxPooling2D
-from tensorflow.python.keras.utils import to_categorical
 
 
 class SpectrogramBasedModel:
     def __init__(self, model_path=None):
         if model_path is not None:
             self.model = load_model(model_path)
+            self.encoder = pickle.load(open('save/s_encoder.pickle', 'rb'))
         else:
             self.model = None
+            self.encoder = LabelEncoder()
 
     def train(self, X_pickle, y_pickle):
         X = pickle.load(open(X_pickle, 'rb'))
         y = pickle.load(open(y_pickle, 'rb'))
-        y = to_categorical(y)
-        print('read pickles')
+
+        # obtaining encoded target column and encoder
+        y = self.encoder.fit_transform(y)
+        pickle_out = open('save/s_encoder.pickle', 'wb')
+        pickle.dump(self.encoder, pickle_out)
+        pickle_out.close()
+        n_classes = len(self.encoder.classes_)
 
         self.model = Sequential()
         self.model.add(Conv2D(64, (2, 2), input_shape=X.shape[1:]))
@@ -35,20 +43,23 @@ class SpectrogramBasedModel:
         self.model.add(Activation('elu'))
         self.model.add(MaxPooling2D(pool_size=(2, 2)))
 
+        self.model.add(Dropout(.2))
         self.model.add(Flatten())
         self.model.add(Dense(1024))
         self.model.add(Activation('elu'))
-        self.model.add(Dropout(.2))
 
-        self.model.add(Dense(5))
+        self.model.add(Dense(n_classes))
         self.model.add(Activation('softmax'))
 
-        self.model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
+        self.model.compile(loss='sparse_categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 
-        self.model.fit(X, y, batch_size=32, epochs=3, validation_split=0.2)
+        self.model.fit(X, y, batch_size=32, epochs=1, validation_split=0.2)
         print('training done')
 
         self.model.save('save/sb.model')
 
-    def predict(self):
-        pass
+    def predict(self, spectrogram_slices):
+        slices = np.array(spectrogram_slices).reshape(-1, 128, 128, 1)
+        prediction = self.model.predict(slices)
+        prediction = np.argmax(prediction, axis=1)
+        print(self.encoder.inverse_transform(prediction))
