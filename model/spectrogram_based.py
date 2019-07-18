@@ -21,21 +21,21 @@ class SpectrogramBasedModel:
 
         self.model = Sequential()
         self.model.add(Conv2D(32, (2, 2), input_shape=X.shape[1:]))
-        self.model.add(Activation('elu'))
+        self.model.add(Activation('relu'))
         self.model.add(MaxPooling2D(pool_size=(2, 2)))
 
         self.model.add(Conv2D(64, (2, 2)))
-        self.model.add(Activation('elu'))
+        self.model.add(Activation('relu'))
         self.model.add(MaxPooling2D(pool_size=(2, 2)))
 
         self.model.add(Conv2D(128, (2, 2)))
-        self.model.add(Activation('elu'))
+        self.model.add(Activation('relu'))
         self.model.add(MaxPooling2D(pool_size=(2, 2)))
 
         self.model.add(Dropout(.2))
         self.model.add(Flatten())
         self.model.add(Dense(256))
-        self.model.add(Activation('elu'))
+        self.model.add(Activation('relu'))
 
         self.model.add(Dense(n_classes))
         self.model.add(Activation('softmax'))
