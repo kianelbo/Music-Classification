@@ -4,8 +4,8 @@ from model.spectrogram_based import SpectrogramBasedModel
 
 # make_training_data('D:/dataset3/')
 
-model = FeaturesBasedModel()
-model.train('save/data.csv')
-features_set, _ = extract('D:/Blues Leave Me Alone.mp3')
+model = FeaturesBasedModel('save/fb.model')
+# model.train('save/data.csv')
+features_set, _ = extract('D:/Hells Bells.mp3')
 model.predict(features_set)
 # SpectrogramBasedModel().train('save/X.pickle', 'save/y.pickle')
