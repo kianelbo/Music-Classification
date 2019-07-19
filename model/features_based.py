@@ -42,7 +42,7 @@ class FeaturesBasedModel:
         self.model.add(keras.layers.Dense(n_classes, activation='softmax'))
         self.model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['accuracy'])
 
-        history = self.model.fit(X_train, y_train, epochs=20)
+        self.model.fit(X_train, y_train, epochs=20)
         print('training done')
 
         test_loss, test_acc = self.model.evaluate(X_test, y_test)
@@ -51,11 +51,7 @@ class FeaturesBasedModel:
         self.model.save('save/fb.model')
 
     def predict(self, features_set):
-        samples = []
-        for fs in features_set:
-            samples.append(fs.split(' '))
-
-        scaled_samples = self.scaler.transform(np.array(samples, dtype=float))
-        prediction = self.model.predict(scaled_samples)
+        scaled_features = self.scaler.transform(np.array(features_set, dtype=float))
+        prediction = self.model.predict(scaled_features)
         prediction = np.argmax(prediction, axis=1)
         print(self.encoder.inverse_transform(prediction))

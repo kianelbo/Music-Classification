@@ -42,13 +42,12 @@ class SpectrogramBasedModel:
 
         self.model.compile(loss='sparse_categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 
-        self.model.fit(X, y, batch_size=32, epochs=5, validation_split=0.2)
+        self.model.fit(X, y, batch_size=32, epochs=8, validation_split=0.2)
         print('training done')
 
         self.model.save('save/sb.model')
 
     def predict(self, spectrogram_slices):
-        slices = np.array(spectrogram_slices).reshape(-1, 128, 128, 1)
-        prediction = self.model.predict(slices)
+        prediction = self.model.predict(spectrogram_slices)
         prediction = np.argmax(prediction, axis=1)
         print(self.encoder.inverse_transform(prediction))

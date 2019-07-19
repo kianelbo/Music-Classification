@@ -1,13 +1,14 @@
 import os
 import pickle
+import numpy as np
 from sklearn.preprocessing import LabelEncoder
 from features.extract_features import create_features, build_features_csv
 from features.extract_spectrogram import generate_spectrogram_slices, build_spectrogram_dataset
 
 
 def extract(filename):
-    features_set = create_features(filename)
-    spectrogram_slices = generate_spectrogram_slices(filename)
+    features_set = [fs.split(' ') for fs in create_features(filename)]
+    spectrogram_slices = np.array(generate_spectrogram_slices(filename)).reshape(-1, 128, 128, 1)
     return features_set, spectrogram_slices
 
 
