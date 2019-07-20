@@ -42,7 +42,7 @@ class SpectrogramBasedModel:
 
         self.model.compile(loss='sparse_categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 
-        self.model.fit(X, y, batch_size=32, epochs=8, validation_split=0.2)
+        self.model.fit(X, y, batch_size=32, epochs=6, validation_split=0.2)
         print('training done')
 
         self.model.save('save/sb.model')

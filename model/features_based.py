@@ -42,7 +42,7 @@ class FeaturesBasedModel:
         self.model.add(keras.layers.Dense(n_classes, activation='softmax'))
         self.model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['accuracy'])
 
-        self.model.fit(X_train, y_train, epochs=20)
+        self.model.fit(X_train, y_train, epochs=18)
         print('training done')
 
         test_loss, test_acc = self.model.evaluate(X_test, y_test)
