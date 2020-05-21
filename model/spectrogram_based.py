@@ -1,21 +1,22 @@
 import pickle
 import numpy as np
-from tensorflow.python.keras.models import Sequential, load_model
-from tensorflow.python.keras.layers import Dense, Activation, Dropout, Flatten
-from tensorflow.python.keras.layers import Conv2D, MaxPooling2D
+from tensorflow.keras import models, Sequential
+from tensorflow.keras.layers import Dense, Activation, Dropout, Flatten
+from tensorflow.keras.layers import Conv2D, MaxPooling2D
 
 
 class SpectrogramBasedModel:
     def __init__(self, model_path=None):
         self.encoder = pickle.load(open('save/encoder.pickle', 'rb'))
         if model_path is not None:
-            self.model = load_model(model_path)
+            self.model = models.load_model(model_path)
         else:
             self.model = None
 
     def train(self, X_pickle, y_pickle):
         X = pickle.load(open(X_pickle, 'rb'))
         y = pickle.load(open(y_pickle, 'rb'))
+        y = np.asarray(y)
 
         n_classes = len(self.encoder.classes_)
 
@@ -45,7 +46,7 @@ class SpectrogramBasedModel:
         self.model.fit(X, y, batch_size=32, epochs=6, validation_split=0.2)
         print('training done')
 
-        self.model.save('save/sb.model')
+        self.model.save('../save/sb.model')
 
     def predict(self, spectrogram_slices):
         prediction = self.model.predict(spectrogram_slices)

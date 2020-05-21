@@ -11,7 +11,7 @@ def create_features(song):
     for i in range(60, 120, 15):
         y, sr = librosa.load(song, mono=True, offset=i, duration=15)
         chroma_stft = librosa.feature.chroma_stft(y=y, sr=sr)
-        rmse = librosa.feature.rmse(y=y)
+        rmse = librosa.feature.rms(y=y)
         spec_cent = librosa.feature.spectral_centroid(y=y, sr=sr)
         spec_bw = librosa.feature.spectral_bandwidth(y=y, sr=sr)
         rolloff = librosa.feature.spectral_rolloff(y=y, sr=sr)
