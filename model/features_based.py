@@ -3,11 +3,13 @@ import pandas as pd
 import numpy as np
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
-from tensorflow.keras import layers, models, Sequential
+from tensorflow.keras import layers, models, Sequential, callbacks
 
 
 class FeaturesBasedModel:
     def __init__(self, model_path=None):
+        self.name = 'features_based_model'
+        self.log_dir = "logs/fit/" + self.name
         self.encoder = pickle.load(open('save/encoder.pickle', 'rb'))
         if model_path is not None:
             self.model = models.load_model(model_path)
@@ -41,13 +43,15 @@ class FeaturesBasedModel:
         self.model.add(layers.Dense(n_classes, activation='softmax'))
         self.model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['accuracy'])
 
-        self.model.fit(X_train, y_train, epochs=18)
+        tb_callback = callbacks.TensorBoard(log_dir=self.log_dir, histogram_freq=1)
+
+        self.model.fit(X_train, y_train, epochs=18, callbacks=[tb_callback])
         print('training done')
 
         test_loss, test_acc = self.model.evaluate(X_test, y_test)
         print('test_acc: ', test_acc)
 
-        self.model.save('../save/fb.model')
+        self.model.save('./save/fb_model')
 
     def predict(self, features_set):
         scaled_features = self.scaler.transform(np.array(features_set, dtype=float))

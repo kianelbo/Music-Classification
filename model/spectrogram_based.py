@@ -1,12 +1,14 @@
 import pickle
 import numpy as np
-from tensorflow.keras import models, Sequential
+from tensorflow.keras import models, Sequential, callbacks
 from tensorflow.keras.layers import Dense, Activation, Dropout, Flatten
 from tensorflow.keras.layers import Conv2D, MaxPooling2D
 
 
 class SpectrogramBasedModel:
     def __init__(self, model_path=None):
+        self.name = 'spectrogram_based_model'
+        self.log_dir = "logs/fit/" + self.name
         self.encoder = pickle.load(open('save/encoder.pickle', 'rb'))
         if model_path is not None:
             self.model = models.load_model(model_path)
@@ -41,12 +43,14 @@ class SpectrogramBasedModel:
         self.model.add(Dense(n_classes))
         self.model.add(Activation('softmax'))
 
-        self.model.compile(loss='sparse_categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
+        self.model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['accuracy'])
 
-        self.model.fit(X, y, batch_size=32, epochs=6, validation_split=0.2)
+        tb_callback = callbacks.TensorBoard(log_dir=self.log_dir, histogram_freq=1)
+
+        self.model.fit(X, y, batch_size=32, epochs=6, validation_split=0.2, callbacks=[tb_callback])
         print('training done')
 
-        self.model.save('../save/sb.model')
+        self.model.save('./save/sb_model')
 
     def predict(self, spectrogram_slices):
         prediction = self.model.predict(spectrogram_slices)
