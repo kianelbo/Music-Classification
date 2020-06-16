@@ -47,12 +47,11 @@ class SpectrogramBasedModel:
 
         tb_callback = callbacks.TensorBoard(log_dir=self.log_dir, histogram_freq=1)
 
-        self.model.fit(X, y, batch_size=32, epochs=6, validation_split=0.2, callbacks=[tb_callback])
-        print('training done')
+        self.model.fit(X, y, batch_size=32, epochs=8, validation_split=0.2, callbacks=[tb_callback])
+        print('training done\n')
+        print(self.model.summary())
 
         self.model.save('./save/sb_model')
 
     def predict(self, spectrogram_slices):
-        prediction = self.model.predict(spectrogram_slices)
-        prediction = np.argmax(prediction, axis=1)
-        print(self.encoder.inverse_transform(prediction))
+        return self.model.predict(spectrogram_slices)

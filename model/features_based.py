@@ -45,16 +45,15 @@ class FeaturesBasedModel:
 
         tb_callback = callbacks.TensorBoard(log_dir=self.log_dir, histogram_freq=1)
 
-        self.model.fit(X_train, y_train, epochs=18, callbacks=[tb_callback])
-        print('training done')
+        self.model.fit(X_train, y_train, epochs=20, callbacks=[tb_callback])
+        print('training done\n')
 
         test_loss, test_acc = self.model.evaluate(X_test, y_test)
         print('test_acc: ', test_acc)
+        print(self.model.summary())
 
         self.model.save('./save/fb_model')
 
     def predict(self, features_set):
         scaled_features = self.scaler.transform(np.array(features_set, dtype=float))
-        prediction = self.model.predict(scaled_features)
-        prediction = np.argmax(prediction, axis=1)
-        print(self.encoder.inverse_transform(prediction))
+        return self.model.predict(scaled_features)
